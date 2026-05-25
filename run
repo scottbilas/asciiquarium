@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DEPS_DIR="$SCRIPT_DIR/.deps"
+CPANM="$DEPS_DIR/cpanm"
+
+# Bootstrap: install deps locally if not yet done
+if [ ! -d "$DEPS_DIR/lib/perl5" ]; then
+    echo "First run — installing dependencies into .deps/ ..."
+    mkdir -p "$DEPS_DIR"
+
+    # Get cpanm if we don't have it locally
+    if [ ! -x "$CPANM" ]; then
+        echo "  Downloading cpanm..."
+        curl -sL https://cpanmin.us -o "$CPANM"
+        chmod +x "$CPANM"
+    fi
+
+    echo "  Installing Perl dependencies..."
+    "$CPANM" --notest --local-lib "$DEPS_DIR" --installdeps "$SCRIPT_DIR"
+    echo "  Done."
+    echo
+fi
+
+# Run with local libs (absolute paths required for macOS hardened perl)
+export PERL5LIB="$DEPS_DIR/lib/perl5:${PERL5LIB:-}"
+exec perl "$SCRIPT_DIR/asciiquarium" "$@"
