@@ -2670,7 +2670,7 @@ sub init_colors {
     if ($transparent) {
         use_default_colors();
         my $cid = 1;
-        for my $f ('WHITE', 'RED', 'GREEN', 'BLUE', 'CYAN', 'MAGENTA', 'YELLOW', 'BLACK') {
+        for my $f ('BLACK', 'RED', 'GREEN', 'BLUE', 'CYAN', 'MAGENTA', 'YELLOW', 'WHITE') {
             init_pair($cid, eval "Curses::COLOR_$f", -1);
             $cid++;
         }
