@@ -107,6 +107,7 @@ Options:
   -c --classic      Only show species from Asciiquarium 1.0
   -t --transparent  Transparent background
   -s --screensaver  Exit on any keypress
+  -S --speed N      Animation delay in tenths of a second (1-255, default 1)
   -h --help         Print help and exit
   -v --version      Print version and exit
 
@@ -138,6 +139,7 @@ my $new_monster = 1;
 my $classic = 0;
 my $transparent = 0;
 my $screensaver = 0;
+my $speed = 1;
 my $print_help = 0;
 my $print_version = 0;
 
@@ -145,9 +147,14 @@ GetOptions(
     'classic'     => \$classic,
     'transparent' => \$transparent,
     'screensaver' => \$screensaver,
+    'speed|S=i'   => \$speed,
     'help'        => \$print_help,
     'version'     => \$print_version,
 ) or die "$help_message";
+
+if ($speed < 1 || $speed > 255) { # 255 is the halfdelay() max
+    die "Error: --speed must be between 1 and 255\n";
+}
 
 if ($print_help) {
     print $help_message;
@@ -198,8 +205,8 @@ sub main {
 
     my $anim = Term::Animation->new();
 
-    # set the wait time for getch
-    halfdelay(1);
+    # set the wait time for getch (tenths of a second)
+    halfdelay($speed);
     #nodelay(1);
 
     init_colors($anim);
